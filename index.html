@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <style>
+            #board {border: solid 1px #333; border-collapse: collapse;}
+            #board td {border: solid 1px #333;}
+        </style>
+    </head>
+    <body>
+        <h1>Turn the red squares green.</h1>
+        <table id="board" style="border: 1px solid black; border-collapse: collapse;"></table>
+        <br/>
+        <button id="reset" onclick="handleResetClick()">Reset</button>
+        <script>
+            let boardSize = 5;
+            let cell = () => { return {on: false}; };
+            let row = (size) => new Array(size).fill().map(() => cell());
+            let makeCells = (size) => {
+                let cells = new Array(size).fill().map(() => row(size));
+                cells[0][0].on = true; // make things interesting.
+                return cells;
+            }
+
+            let victory = false;
+            let cells = makeCells(boardSize);
+
+            let render = () => {
+                // get board DOM node
+                let boardNode = document.getElementById("board");
+                if (!boardNode) {
+                    console.error("couldn't find DOM node for board");
+                }
+
+                // clear board
+                while (boardNode.firstChild) {
+                    boardNode.removeChild(boardNode.firstChild);
+                }
+
+                // draw board
+                for (let y = 0; y < boardSize; y++) {
+                    let trNode = document.createElement("tr");
+
+                    for (let x = 0; x < boardSize; x++) {
+                        tdNode = document.createElement("td");
+                        tdNode.style.width = "25px";
+                        tdNode.style.height = "25px";
+                        tdNode.style.backgroundColor = cells[x][y].on ? "green" : "red";
+                        tdNode.onclick = () => {
+                            console.log("clicked (" + x + ", " + y + ")");
+                            handleCellClick(x, y);
+                        };
+
+                        trNode.appendChild(tdNode);
+                    }
+
+                    boardNode.appendChild(trNode);
+                }
+
+                if (victory) {
+                    setTimeout(function () {
+                        alert("victory!");
+                    }, 25);
+                }
+            }
+
+            function detectVictory() {
+                return cells.reduce((accumulator, row) => {
+                    return accumulator && row.reduce((accumulator, cell) => {
+                        return accumulator && cell.on === true;
+                    });
+                });
+            }
+
+            function handleResetClick() {
+                cells = makeCells(boardSize);
+                render();
+            }
+
+            function handleCellClick(x, y) {
+                let toggleCell = (x, y) => {
+                    if (cells[x] && cells[x][y]) {
+                        cells[x][y].on = !(cells[x][y].on);
+                    }
+                }
+
+                toggleCell(x-1, y-1);
+                toggleCell(x-1, y);
+                toggleCell(x-1, y+1);
+
+                toggleCell(x, y-1);
+                toggleCell(x, y);
+                toggleCell(x, y+1);
+
+                toggleCell(x+1, y-1);
+                toggleCell(x+1, y);
+                toggleCell(x+1, y+1);
+
+                victory = detectVictory();
+
+                render();
+            }
+
+            render();
+        </script>
+    </body>
+</html>
