@@ -56,14 +56,16 @@
             }
 
             function detectVictory() {
-                return cells.reduce((accumulator, row) => {
-                    return accumulator && row.reduce((accumulator, cell) => {
-                        return accumulator && cell.on === true;
-                    });
-                });
+                return cells
+                    .map(row =>
+                        row
+                            .map(x => x.on)
+                            .reduce((x, y) => x && y))
+                    .reduce((x, y) => x && y);
             }
 
             function handleResetClick() {
+                victory = false;
                 cells = makeCells(boardSize);
                 render();
             }
@@ -71,7 +73,7 @@
             function handleCellClick(x, y) {
                 let toggleCell = (x, y) => {
                     if (cells[x] && cells[x][y]) {
-                        cells[x][y].on = !(cells[x][y].on);
+                        cells[x][y].on = (cells[x][y].on === false);
                     }
                 }
 
