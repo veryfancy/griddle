@@ -24,18 +24,12 @@
             let cells = makeCells(boardSize);
 
             let render = () => {
-                // get board DOM node
                 let boardNode = document.getElementById("board");
-                if (!boardNode) {
-                    console.error("couldn't find DOM node for board");
-                }
 
-                // clear board
                 while (boardNode.firstChild) {
                     boardNode.removeChild(boardNode.firstChild);
                 }
 
-                // draw board
                 for (let y = 0; y < boardSize; y++) {
                     let trNode = document.createElement("tr");
 
@@ -45,7 +39,6 @@
                         tdNode.style.height = "25px";
                         tdNode.style.backgroundColor = cells[x][y].on ? "green" : "red";
                         tdNode.onclick = () => {
-                            console.log("clicked (" + x + ", " + y + ")");
                             handleCellClick(x, y);
                         };
 
